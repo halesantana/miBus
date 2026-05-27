@@ -10,6 +10,19 @@ from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 from django.views.decorators.csrf import csrf_exempt
+from rest_framework.decorators import (
+    api_view,
+    authentication_classes,
+    permission_classes
+)
+
+from rest_framework.authentication import (
+    BasicAuthentication
+)
+
+from rest_framework.permissions import (
+    AllowAny
+)
 
 def mapa(request):
 
@@ -19,8 +32,9 @@ def mapa(request):
         'paraderos': paraderos
     })
 
-@csrf_exempt
 @api_view(['POST'])
+@authentication_classes([])
+@permission_classes([AllowAny])
 def recibir_gps(request):
 
     bus_id = request.data.get('bus_id')
@@ -94,8 +108,9 @@ def recibir_gps(request):
     
     return Response(serializer.errors, status=400)
 
-@csrf_exempt
-@api_view(['GET'])
+@api_view(['POST'])
+@authentication_classes([])
+@permission_classes([AllowAny])
 def obtener_posiciones(request):
 
     buses = Bus.objects.all()
@@ -188,8 +203,9 @@ def logout_conductor(request):
 
     return redirect('login')
 
-@csrf_exempt
 @api_view(['POST'])
+@authentication_classes([])
+@permission_classes([AllowAny])
 def iniciar_servicio(request):
 
     bus_id = request.data.get('bus_id')
@@ -214,8 +230,9 @@ def iniciar_servicio(request):
             'error': 'Bus no encontrado'
         }, status=404)
 
-@csrf_exempt  
 @api_view(['POST'])
+@authentication_classes([])
+@permission_classes([AllowAny])
 def finalizar_servicio(request):
 
     bus_id = request.data.get('bus_id')
