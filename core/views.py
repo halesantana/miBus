@@ -9,6 +9,7 @@ from django.contrib.auth import login
 from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
+from django.views.decorators.csrf import csrf_exempt
 
 def mapa(request):
 
@@ -18,6 +19,7 @@ def mapa(request):
         'paraderos': paraderos
     })
 
+@csrf_exempt
 @api_view(['POST'])
 def recibir_gps(request):
 
@@ -92,6 +94,7 @@ def recibir_gps(request):
     
     return Response(serializer.errors, status=400)
 
+@csrf_exempt
 @api_view(['GET'])
 def obtener_posiciones(request):
 
@@ -185,6 +188,7 @@ def logout_conductor(request):
 
     return redirect('login')
 
+@csrf_exempt
 @api_view(['POST'])
 def iniciar_servicio(request):
 
@@ -209,7 +213,8 @@ def iniciar_servicio(request):
         return Response({
             'error': 'Bus no encontrado'
         }, status=404)
-    
+
+@csrf_exempt  
 @api_view(['POST'])
 def finalizar_servicio(request):
 
