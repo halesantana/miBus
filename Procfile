@@ -1,1 +1,1 @@
-web: gunicorn miBus.wsgi
+web: gunicorn config.wsgi
