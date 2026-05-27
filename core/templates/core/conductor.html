@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Modo Conductor</title>
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+
+            font-family: 'Inter', sans-serif;
+
+            background:
+                linear-gradient(
+                    180deg,
+                    #F7F7F7 0%,
+                    #EEF4F1 100%
+                );
+
+            color: #596273;
+
+            height: 100vh;
+
+            overflow: hidden;
+        }
+
+        .driver-app {
+
+            display: flex;
+
+            flex-direction: column;
+
+            height: 100vh;
+
+            padding: 24px;
+        }
+
+        /* TOPBAR */
+
+        .driver-topbar {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            margin-bottom: 30px;
+        }
+
+        .driver-logo {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 14px;
+        }
+
+        .driver-logo-icon {
+
+            width: 56px;
+
+            height: 56px;
+
+            border-radius: 20px;
+
+            background: #A8D5C2;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            font-size: 28px;
+
+            box-shadow:
+                0 10px 24px rgba(168,213,194,0.35);
+        }
+
+        .driver-title {
+
+            font-size: 30px;
+
+            font-weight: 800;
+
+            letter-spacing: -1px;
+        }
+
+        .driver-title span {
+
+            color: #A8D5C2;
+        }
+
+        .driver-subtitle {
+
+            font-size: 14px;
+
+            color: #8A94A6;
+        }
+
+        /* GPS STATUS */
+
+        .estado-gps {
+
+            background:
+                rgba(168,213,194,0.18);
+
+            color: #4D8B74;
+
+            padding: 12px 18px;
+
+            border-radius: 22px;
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 8px;
+
+            font-weight: 700;
+        }
+
+        .gps-dot {
+
+            width: 10px;
+
+            height: 10px;
+
+            border-radius: 50%;
+
+            background: #5BC58A;
+
+            animation:
+                pulse 1.6s infinite;
+        }
+
+        @keyframes pulse {
+
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.4);
+                opacity: 0.5;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* MAIN */
+
+        .driver-main {
+
+            flex: 1;
+
+            display: flex;
+
+            flex-direction: column;
+
+            justify-content: center;
+
+            gap: 28px;
+        }
+
+        /* VELOCIDAD */
+
+        .velocidad-card {
+
+            background:
+                rgba(255,255,255,0.9);
+
+            backdrop-filter: blur(18px);
+
+            border-radius: 36px;
+
+            padding: 40px 30px;
+
+            text-align: center;
+
+            box-shadow:
+                0 12px 36px rgba(0,0,0,0.08);
+        }
+
+        .velocidad-label {
+
+            font-size: 18px;
+
+            color: #8A94A6;
+
+            margin-bottom: 10px;
+        }
+
+        .velocidad-numero {
+
+            font-size: 110px;
+
+            font-weight: 800;
+
+            line-height: 1;
+
+            color: #A8D5C2;
+
+            letter-spacing: -6px;
+        }
+
+        .velocidad-unidad {
+
+            font-size: 22px;
+
+            font-weight: 700;
+
+            color: #596273;
+        }
+
+        /* ESTADO */
+
+        .estado-card {
+
+            background:
+                rgba(255,255,255,0.85);
+
+            border-radius: 28px;
+
+            padding: 24px;
+
+            text-align: center;
+
+            box-shadow:
+                0 10px 30px rgba(0,0,0,0.06);
+        }
+
+        .estado-linea {
+
+            font-size: 24px;
+
+            font-weight: 700;
+
+            margin-bottom: 10px;
+        }
+
+        .estado-conexion {
+
+            font-size: 18px;
+
+            color: #4D8B74;
+
+            font-weight: 700;
+        }
+
+        /* BOTON */
+
+        .btn-ruta {
+
+            height: 72px;
+
+            border: none;
+
+            border-radius: 26px;
+
+            background: #596273;
+
+            color: white;
+
+            font-size: 20px;
+
+            font-weight: 700;
+
+            letter-spacing: 1px;
+
+            box-shadow:
+                0 12px 24px rgba(89,98,115,0.25);
+
+            transition: 0.2s;
+
+            cursor: pointer;
+        }
+
+        .btn-ruta:active {
+
+            transform: scale(0.98);
+        }
+
+        .selector-bus-card {
+
+            background:
+                rgba(255,255,255,0.9);
+
+            border-radius: 28px;
+
+            padding: 22px;
+
+            box-shadow:
+                0 10px 30px rgba(0,0,0,0.06);
+        }
+
+        .selector-label {
+
+            font-size: 16px;
+
+            font-weight: 700;
+
+            margin-bottom: 12px;
+
+            color: #596273;
+        }
+
+        #bus-select {
+
+            width: 100%;
+
+            height: 68px;
+
+            border: none;
+
+            outline: none;
+
+            border-radius: 22px;
+
+            background: #F5F7F6;
+
+            padding: 0 22px;
+
+            font-size: 20px;
+
+            font-weight: 600;
+
+            color: #596273;
+
+            appearance: none;
+
+            -webkit-appearance: none;
+
+            -moz-appearance: none;
+
+            box-shadow:
+                inset 0 2px 6px rgba(0,0,0,0.03);
+
+            transition: 0.2s;
+        }
+
+        #bus-select:focus {
+
+            box-shadow:
+                0 0 0 4px rgba(168,213,194,0.25);
+
+        }
+
+        .selector-bus-card {
+
+            position: relative;
+        }
+
+        .btn-logout {
+
+            text-decoration: none;
+
+            background: white;
+
+            color: #596273;
+
+            padding: 10px 18px;
+
+            border-radius: 14px;
+
+            font-size: 14px;
+
+            font-weight: 700;
+
+            box-shadow:
+                0 4px 14px rgba(0,0,0,0.06);
+        }
+
+        .select-arrow {
+
+            position: absolute;
+
+            right: 24px;
+
+            top: 58%;
+
+            transform: translateY(-50%);
+
+            pointer-events: none;
+
+            color: #7D8797;
+
+            font-size: 14px;
+        }
+
+    </style>
+
+</head>
+<body>
+
+<div class="driver-app">
+
+    <!-- TOPBAR -->
+
+    <header class="driver-topbar">
+
+        <div class="driver-logo">
+
+            <div class="driver-logo-icon">
+                🚌
+            </div>
+
+            <div>
+
+                <div class="driver-title">
+                    <span>mi</span>Bus!
+                </div>
+
+                <div class="driver-subtitle">
+                    Conductor
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="estado-gps">
+
+            <div class="gps-dot"></div>
+
+            GPS Activo
+
+        </div>
+
+        <a
+            href="{% url 'logout' %}"
+            class="btn-logout">
+
+            Salir
+
+        </a>
+
+    </header>
+
+    <!-- CONTENIDO -->
+
+    <main class="driver-main">
+        <div class="selector-bus-card">
+
+            <div class="selector-label">
+                Seleccionar bus
+            </div>
+
+            <select id="bus-select">
+                
+                {% for bus in buses %}
+
+                    <option value="{{ bus.id }}">
+
+                        {{ bus.patente }}
+
+                    </option>
+
+                {% endfor %}
+
+            </select>
+            <div class="select-arrow">
+                ▼
+            </div>
+        </div>
+
+        <div class="velocidad-card">
+
+            <div class="velocidad-label">
+                Velocidad actual
+            </div>
+
+            <div
+                id="velocidad-actual"
+                class="velocidad-numero">
+
+                0
+
+            </div>
+
+            <div class="velocidad-unidad">
+                km/h
+            </div>
+
+        </div>
+
+        <div class="estado-card">
+
+            <div class="estado-linea">
+
+                📍 Línea Centro
+
+            </div>
+
+            <div
+                id="estado-conexion"
+                class="estado-conexion">
+
+                ⚪ Fuera de servicio
+
+            </div>
+
+        </div>
+
+        <button
+            id="btn-ruta"
+            class="btn-ruta">
+
+            INICIAR RECORRIDO
+
+        </button>
+
+    </main>
+
+</div>
+
+<script>
+
+    let watchId = null;
+
+    function iniciarGPS() {
+
+        if (!navigator.geolocation) {
+
+            alert('GPS no soportado');
+
+            return;
+        }
+
+        document.getElementById('estado-conexion').innerHTML =
+            '📡 Enviando ubicación...';
+
+        watchId = navigator.geolocation.watchPosition(
+            enviarPosicion,
+            mostrarError,
+            {
+                enableHighAccuracy: true,
+                maximumAge: 0,
+                timeout: 5000
+            }
+        );
+    }
+
+    async function enviarPosicion(position) {
+
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+        const velocidad = position.coords.speed || 0;
+        const velocidadMS =
+            position.coords.speed || 0;
+
+        let velocidadKMH =
+            velocidadMS * 3.6;
+
+        if (velocidadKMH < 0) {
+            velocidadKMH = 0;
+        }
+
+        if (velocidadKMH > 120) {
+            velocidadKMH = 120;
+        }
+
+        document.getElementById('estado-conexion').innerHTML = `
+            Latitud: ${lat}<br>
+            Longitud: ${lng}
+        `;
+
+        document.getElementById(
+            'velocidad-actual'
+        ).innerText =
+            Math.round(velocidadKMH);
+
+        const busSeleccionado =
+            document.getElementById(
+                'bus-select'
+            ).value;
+
+        await fetch('/api/gps/', {
+
+            method: 'POST',
+
+            headers: {
+                'Content-Type': 'application/json'
+            },
+
+            body: JSON.stringify({
+                bus_id: busSeleccionado,
+                latitud: lat,
+                longitud: lng,
+                velocidad: velocidad
+            })
+        });
+    }
+
+    function mostrarError(error) {
+
+        let mensaje = '';
+
+        switch(error.code) {
+
+            case error.PERMISSION_DENIED:
+                mensaje = '❌ Permiso GPS denegado';
+                break;
+
+            case error.POSITION_UNAVAILABLE:
+                mensaje = '❌ Ubicación no disponible';
+                break;
+
+            case error.TIMEOUT:
+                mensaje = '❌ Tiempo de espera agotado';
+                break;
+
+            default:
+                mensaje = '❌ Error desconocido';
+        }
+
+        document.getElementById('estado-conexion').innerHTML = mensaje;
+    }
+
+    function detenerGPS() {
+
+        if (watchId !== null) {
+
+            navigator.geolocation.clearWatch(
+                watchId
+            );
+
+            watchId = null;
+        }
+
+        const busSeleccionado =
+            document.getElementById(
+                'bus-select'
+            ).value;
+
+        fetch(
+            '/api/finalizar-servicio/',
+            {
+                method: 'POST',
+
+                headers: {
+                    'Content-Type':
+                        'application/json'
+                },
+
+                body: JSON.stringify({
+                    bus_id: busSeleccionado
+                })
+            }
+        );
+
+        recorridoActivo = false;
+
+        document.getElementById(
+            'estado-conexion'
+        ).innerText =
+            '⚪ Fuera de servicio';
+
+        document.getElementById(
+            'btn-ruta'
+        ).innerText =
+            'INICIAR RECORRIDO';
+
+        document.getElementById(
+            'estado'
+        ).innerHTML =
+            'GPS detenido';
+    }
+
+    let recorridoActivo = false;
+
+    document.getElementById(
+        'btn-ruta'
+    ).addEventListener('click', async () => {
+
+        if (!recorridoActivo) {
+
+            const busSeleccionado =
+                document.getElementById(
+                    'bus-select'
+                ).value;
+
+            await fetch(
+                '/api/iniciar-servicio/',
+                {
+                    method: 'POST',
+
+                    headers: {
+                        'Content-Type':
+                            'application/json'
+                    },
+
+                    body: JSON.stringify({
+                        bus_id: busSeleccionado
+                    })
+                }
+            );
+
+            iniciarGPS();
+
+            recorridoActivo = true;
+
+            document.getElementById(
+                'estado-conexion'
+            ).innerText =
+                '🟢 En servicio';
+
+            document.getElementById(
+                'btn-ruta'
+            ).innerText =
+                'FINALIZAR RECORRIDO';
+
+        } else {
+
+            detenerGPS();
+        }
+
+    });
+
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,961 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="theme-color" content="#1976d2">
+    <title>miBus!</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+    <link rel="manifest" href="{% static 'core/manifest.json' %}">
+
+
+    <style>
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+
+        font-family: 'Inter', sans-serif;
+
+        background: #F7F7F7;
+
+        color: #596273;
+
+        overflow: hidden;
+    }
+
+    .app-container {
+
+        width: 100vw;
+        height: 100vh;
+
+        display: flex;
+        flex-direction: column;
+
+        position: relative;
+    }
+
+    /* TOPBAR */
+
+    .topbar {
+
+        height: 82px;
+
+        background:
+            rgba(255,255,255,0.82);
+
+        backdrop-filter: blur(18px);
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: space-between;
+
+        padding: 0 20px;
+
+        position: absolute;
+
+        top: 0;
+
+        left: 0;
+
+        right: 0;
+
+        z-index: 1000;
+
+        box-shadow:
+            0 4px 24px rgba(0,0,0,0.05);
+
+        border-bottom:
+            1px solid rgba(255,255,255,0.4);
+    }
+
+    .logo {
+
+        font-size: 30px;
+
+        font-weight: 700;
+
+        color: #596273;
+    }
+
+    .logo span {
+
+        color: #A8D5C2;
+    }
+
+    .estado {
+
+        background: #A8D5C2;
+
+        color: white;
+
+        padding: 8px 14px;
+
+        border-radius: 20px;
+
+        font-size: 14px;
+
+        font-weight: 600;
+    }
+
+    /* MAPA */
+
+    #map {
+
+        width: 100%;
+
+        height: 100vh;
+    }
+
+    /* PANEL INFERIOR */
+
+    .panel-info {
+
+        position: absolute;
+
+        bottom: 90px;
+
+        left: 20px;
+
+        right: 20px;
+
+        z-index: 1000;
+    }
+
+    .card-eta {
+
+        background:
+            rgba(255,255,255,0.92);
+
+        backdrop-filter: blur(18px);
+
+        border-radius: 34px;
+
+        padding: 28px;
+
+        box-shadow:
+            0 12px 40px rgba(0,0,0,0.08);
+
+        min-width: 300px;
+
+        position: relative;
+
+        overflow: hidden;
+
+        border:
+            1px solid rgba(255,255,255,0.4);
+    }
+
+    @keyframes subir {
+
+        from {
+            transform: translateY(40px);
+            opacity: 0;
+        }
+
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+    .card-eta h3 {
+
+        font-size: 16px;
+
+        color: #596273;
+
+        margin-bottom: 10px;
+    }
+
+    .eta {
+
+        font-size: 82px;
+
+        font-weight: 800;
+
+        color: #A8D5C2;
+
+        line-height: 1;
+
+        letter-spacing: -4px;
+
+        margin-top: 10px;
+    }
+
+    .paradero {
+
+        margin-top: 14px;
+
+        font-size: 20px;
+
+        font-weight: 600;
+
+        color: #596273;
+    }
+
+    /* NAVBAR */
+
+    .bottom-nav {
+
+        position: absolute;
+
+        bottom: 0;
+
+        left: 0;
+
+        right: 0;
+
+        height: 75px;
+
+        background: rgba(255,255,255,0.9);
+
+        backdrop-filter: blur(16px);
+
+        display: flex;
+
+        justify-content: space-around;
+
+        align-items: center;
+
+        z-index: 1000;
+
+        box-shadow: 0 -2px 12px rgba(0,0,0,0.05);
+    }
+
+    .bottom-nav button {
+
+        border: none;
+
+        background: transparent;
+
+        display: flex;
+
+        flex-direction: column;
+
+        align-items: center;
+
+        gap: 5px;
+
+        color: #596273;
+
+        font-size: 13px;
+
+        font-weight: 600;
+
+        cursor: pointer;
+
+        transition: 0.2s;
+    }
+
+    .bottom-nav button:hover {
+
+        transform: translateY(-2px);
+
+        color: #A8D5C2;
+    }
+
+    /* LEAFLET */
+
+    .leaflet-control-zoom {
+
+        border: none !important;
+
+        box-shadow: 0 4px 16px rgba(0,0,0,0.08) !important;
+
+        border-radius: 16px !important;
+
+        overflow: hidden;
+    }
+
+    .leaflet-control-zoom a {
+
+        background: white !important;
+
+        color: #596273 !important;
+
+        border: none !important;
+    }
+
+    .leaflet-popup-content-wrapper {
+
+        border-radius: 20px;
+
+        padding: 10px;
+
+        background: rgba(255,255,255,0.95);
+
+        backdrop-filter: blur(10px);
+
+        box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+    }
+
+    .leaflet-popup-tip {
+
+        background: white;
+    }
+
+    .bus-marker {
+
+        width: 42px;
+
+        height: 42px;
+
+        background: #A8D5C2;
+
+        border-radius: 50%;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        font-size: 22px;
+
+        box-shadow:
+            0 8px 20px rgba(0,0,0,0.15);
+
+        border: 3px solid white;
+
+        animation: flotar 2s ease-in-out infinite;
+    }
+
+    @keyframes flotar {
+
+        0% {
+            transform: translateY(0px);
+        }
+
+        50% {
+            transform: translateY(-4px);
+        }
+
+        100% {
+            transform: translateY(0px);
+        }
+    }
+
+    .bus-icon {
+
+        transition:
+            transform 1.5s linear;
+
+        will-change: transform;
+    }
+
+    .linea-bus {
+
+        font-size: 18px;
+
+        font-weight: 700;
+
+        color: #596273;
+
+        margin-bottom: 10px;
+    }
+
+    .info-extra {
+
+        margin-top: 18px;
+
+        display: flex;
+
+        justify-content: space-between;
+
+        gap: 10px;
+    }
+
+    .info-extra div {
+
+        flex: 1;
+
+        background: #F7F7F7;
+
+        padding: 12px;
+
+        border-radius: 16px;
+
+        text-align: center;
+
+        font-size: 14px;
+
+        font-weight: 600;
+
+        color: #596273;
+    }
+
+    #contenedor-tarjetas {
+
+        display: flex;
+
+        gap: 16px;
+
+        overflow-x: auto;
+
+        padding-bottom: 10px;
+
+        scrollbar-width: none;
+    }
+
+    #contenedor-tarjetas::-webkit-scrollbar {
+
+        display: none;
+    }
+
+    .card-eta {
+
+        min-width: 260px;
+
+        flex-shrink: 0;
+    }
+
+    .paradero-marker {
+
+        width: 36px;
+
+        height: 36px;
+
+        background: #C7B6E6;
+
+        border-radius: 50%;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        font-size: 18px;
+
+        border: 3px solid white;
+
+        box-shadow:
+            0 6px 18px rgba(0,0,0,0.12);
+
+        animation:
+            respirar 3s ease-in-out infinite;
+    }
+
+    @keyframes respirar {
+
+        0% {
+            transform: scale(1);
+        }
+
+        50% {
+            transform: scale(1.08);
+        }
+
+        100% {
+            transform: scale(1);
+        }
+    }
+
+    #map {
+
+        filter:
+            saturate(0.9)
+            brightness(0.96);
+    }
+
+    .leaflet-control-zoom {
+
+        display: none;
+    }
+
+    .topbar-left {
+
+        display: flex;
+
+        align-items: center;
+
+        gap: 14px;
+    }
+
+    .logo-icon {
+
+        width: 52px;
+
+        height: 52px;
+
+        border-radius: 18px;
+
+        background: #A8D5C2;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        font-size: 28px;
+
+        box-shadow:
+            0 8px 20px rgba(168,213,194,0.35);
+    }
+
+    .logo-title {
+
+        font-size: 28px;
+
+        font-weight: 800;
+
+        letter-spacing: -1px;
+
+        color: #596273;
+    }
+
+    .logo-title span {
+
+        color: #A8D5C2;
+    }
+
+    .logo-subtitle {
+
+        font-size: 13px;
+
+        color: #8A94A6;
+
+        margin-top: -2px;
+    }
+
+    .estado-online {
+
+        background: rgba(168,213,194,0.18);
+
+        color: #4D8B74;
+
+        padding: 10px 16px;
+
+        border-radius: 22px;
+
+        display: flex;
+
+        align-items: center;
+
+        gap: 8px;
+
+        font-size: 14px;
+
+        font-weight: 700;
+    }
+
+    .estado-dot {
+
+        width: 10px;
+
+        height: 10px;
+
+        border-radius: 50%;
+
+        background: #5BC58A;
+
+        animation:
+            pulse 1.8s infinite;
+    }
+
+    @keyframes pulse {
+
+        0% {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        50% {
+            transform: scale(1.4);
+            opacity: 0.6;
+        }
+
+        100% {
+            transform: scale(1);
+            opacity: 1;
+        }
+    }
+
+</style>
+</head>
+<body>
+<div class="app-container">
+
+    <header class="topbar">
+
+        <div class="topbar-left">
+
+            <div class="logo-icon">
+                🚌
+            </div>
+
+            <div class="logo-text">
+
+                <div class="logo-title">
+                    <span>mi</span>Bus!
+                </div>
+
+                <div class="logo-subtitle">
+                    Tu ruta en tiempo real
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="estado-online">
+
+            <div class="estado-dot"></div>
+
+            En vivo
+
+        </div>
+
+    </header>
+
+    <div id="map">
+        <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    </div>
+    <div class="panel-info">
+
+        <div id="contenedor-tarjetas"></div>
+
+    </div>
+    <nav class="bottom-nav">
+
+        <button>🗺️ Mapa</button>
+        <button>🚌 Buses</button>
+        <button>🛑 Paraderos</button>
+        <button>⚙️ Ajustes</button>
+
+    </nav>
+</div>
+<script>
+
+    // Crear mapa
+    const map = L.map('map').setView([-42.476, -73.5459], 12);
+        
+    // Cargar mapa OpenStreetMap
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    // Guardar marcadores de buses
+    const buses = {};
+
+    const busIcon = L.divIcon({
+
+        className: 'bus-icon',
+
+        html: `
+            <div class="bus-marker">
+                🚌
+            </div>
+        `,
+
+        iconSize: [40, 40],
+
+        iconAnchor: [20, 20]
+
+    });
+    const paraderoIcon = L.divIcon({
+
+        className: 'paradero-icon',
+
+        html: `
+            <div class="paradero-marker">
+                🛑
+            </div>
+        `,
+
+        iconSize: [34, 34],
+
+        iconAnchor: [17, 17]
+
+    });
+
+    // Guardar posiciones anteriores
+    const posicionesAnteriores = {};
+    // Lista de paraderos
+    const paraderos = [];
+
+    async function cargarRuta(busId) {
+
+        const response =
+            await fetch(`/api/ruta/${busId}/`);
+
+        const ruta = await response.json();
+
+        L.polyline(ruta, {
+            color: 'blue',
+            weight: 5,
+            opacity: 0.7
+        }).addTo(map);
+
+    }
+
+    // Cargar paraderos desde Django
+    {% for paradero in paraderos %}
+
+        L.marker(
+            [
+                {{ paradero.latitud }},
+                {{ paradero.longitud }}
+            ],
+            {
+                icon: paraderoIcon
+            }
+        )
+        .addTo(map)
+        .bindPopup(`
+            🛑 {{ paradero.nombre }}
+        `);
+
+        paraderos.push({
+            nombre: "{{ paradero.nombre }}",
+            latitud: {{ paradero.latitud }},
+            longitud: {{ paradero.longitud }}
+        });
+
+    {% endfor %}
+
+    // Calcular distancia entre coordenadas (Haversine)
+    function calcularDistancia(lat1, lon1, lat2, lon2) {
+
+        const R = 6371;
+
+        const dLat = (lat2 - lat1) * Math.PI / 180;
+        const dLon = (lon2 - lon1) * Math.PI / 180;
+
+        const a =
+            Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(lat1 * Math.PI / 180) *
+            Math.cos(lat2 * Math.PI / 180) *
+            Math.sin(dLon / 2) *
+            Math.sin(dLon / 2);
+
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+        return R * c;
+    }
+    // Calcular ETA
+    function calcularETA(distanciaKm, velocidadKmH) {
+
+        if (velocidadKmH <= 0) {
+            return 'Sin datos';
+        }
+
+        const tiempoHoras = distanciaKm / velocidadKmH;
+
+        const minutos = Math.round(tiempoHoras * 60);
+
+        return `${minutos} min`;
+    }
+
+    // Actualizar buses automáticamente
+    async function actualizarBuses() {
+
+        const response = await fetch('/api/posiciones/');
+
+        const data = await response.json();
+
+        data.forEach(posicion => {
+
+            const lat = parseFloat(posicion.latitud);
+            const lng = parseFloat(posicion.longitud);
+
+            // Buscar paradero más cercano
+            let paraderoCercano = null;
+
+            let menorDistancia = Infinity;
+
+            paraderos.forEach(paradero => {
+
+                const distancia = calcularDistancia(
+                    lat,
+                    lng,
+                    paradero.latitud,
+                    paradero.longitud
+                );
+
+                if (distancia < menorDistancia) {
+
+                    menorDistancia = distancia;
+
+                    paraderoCercano = paradero;
+                }
+
+            });
+
+            // Detectar dirección
+            let acercandose = true;
+
+            if (posicionesAnteriores[posicion.bus_id]) {
+
+                const anterior =
+                    posicionesAnteriores[posicion.bus_id];
+
+                const distanciaAnterior = calcularDistancia(
+                    anterior.lat,
+                    anterior.lng,
+                    paraderoCercano.latitud,
+                    paraderoCercano.longitud
+                );
+
+                // Si ahora está más lejos → alejándose
+                if (menorDistancia > distanciaAnterior) {
+
+                    acercandose = false;
+
+                }
+
+            }
+
+            // Guardar posición actual
+            posicionesAnteriores[posicion.bus_id] = {
+                lat: lat,
+                lng: lng
+            };
+
+            // Texto dirección
+            const estadoDireccion = acercandose
+                ? '🟢 En camino'
+                : '⚪ Recorriendo ruta';
+
+            // Velocidad promedio temporal
+            //const velocidad = 30;
+            const velocidad = parseFloat(posicion.velocidad);
+            // ETA
+            const eta = calcularETA(
+                menorDistancia,
+                velocidad
+            );
+
+            const contenedor =
+                document.getElementById(
+                    'contenedor-tarjetas'
+                );
+
+            let tarjeta = document.getElementById(
+                `bus-${posicion.bus_id}`
+            );
+
+            if (!tarjeta) {
+
+                tarjeta = document.createElement('div');
+
+                tarjeta.className = 'card-eta';
+
+                tarjeta.id = `bus-${posicion.bus_id}`;
+
+                contenedor.appendChild(tarjeta);
+            }
+
+            tarjeta.innerHTML = `
+
+                <div class="linea-bus">
+                    🚌 ${posicion.patente}
+                </div>
+
+                <div class="eta">
+                    ${eta}
+                </div>
+
+                <div class="paradero">
+                    🛑 ${paraderoCercano.nombre}
+                </div>
+
+                <div class="info-extra">
+
+                    <div>
+                        ⚡ ${velocidad.toFixed(1)} km/h
+                    </div>
+
+                    <div>
+                        ${estadoDireccion}
+                    </div>
+
+                </div>
+
+            `;
+            
+            // Si el bus ya existe → mover marcador
+            if (buses[posicion.bus_id]) {
+
+                const marker = buses[posicion.bus_id];
+
+                const posicionActual = marker.getLatLng();
+
+                const nuevaLat = posicionActual.lat +
+                    (lat - posicionActual.lat);
+
+                const nuevaLng = posicionActual.lng +
+                    (lng - posicionActual.lng);
+
+                marker.setLatLng([
+                    nuevaLat,
+                    nuevaLng
+                ]);
+
+                buses[posicion.bus_id]
+                    .setPopupContent(`
+                        🚌 Bus: ${posicion.patente} <br>
+                        🛑 Próximo paradero:
+                            ${paraderoCercano.nombre} <br>
+                        📍 Distancia:
+                            ${menorDistancia.toFixed(2)} km <br>
+                        ${estadoDireccion} <br>
+                        ⏱️ ETA: ${eta}
+                    `);
+
+            } else {
+
+                // Crear marcador nuevo
+                const marker = L.marker(
+                    [lat, lng],
+                    {
+                        icon: busIcon
+                    }
+                )
+                    .addTo(map);
+
+                marker.bindPopup(`
+                    🚌 Bus: ${posicion.patente} <br>
+                    🛑 Próximo paradero:
+                        ${paraderoCercano.nombre} <br>
+                    📍 Distancia:
+                        ${menorDistancia.toFixed(2)} km <br>
+                    ${estadoDireccion} <br>
+                    ⏱️ ETA: ${eta}
+                `);
+
+                buses[posicion.bus_id] = marker;
+
+            }
+
+        });
+
+    }
+
+    // Actualizar cada 2 segundos
+    setInterval(actualizarBuses, 2000);
+
+    // Ejecutar inmediatamente
+    actualizarBuses();
+
+    cargarRuta(1);
+
+</script>
+</body>
+</html>
