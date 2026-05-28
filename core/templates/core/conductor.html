@@ -529,6 +529,30 @@
 
     let watchId = null;
 
+    let wakeLock = null;
+
+    async function mantenerPantallaActiva() {
+
+        try {
+
+            wakeLock =
+                await navigator.wakeLock.request(
+                    'screen'
+                );
+
+            console.log(
+                '🔆 Pantalla bloqueada activa'
+            );
+
+        } catch(err) {
+
+            console.log(
+                'Wake Lock error:',
+                err
+            );
+        }
+    }
+
     function iniciarGPS() {
 
         if (!navigator.geolocation) {
@@ -682,30 +706,6 @@
             wakeLock.release();
 
             wakeLock = null;
-        }
-    }
-
-    let wakeLock = null;
-
-    async function mantenerPantallaActiva() {
-
-        try {
-
-            wakeLock =
-                await navigator.wakeLock.request(
-                    'screen'
-                );
-
-            console.log(
-                '🔆 Pantalla bloqueada activa'
-            );
-
-        } catch(err) {
-
-            console.log(
-                'Wake Lock error:',
-                err
-            );
         }
     }
 
