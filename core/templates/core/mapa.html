@@ -919,9 +919,14 @@
                     nuevaLng
                 ]);
 
-                map.setView([lat, lng], 16);
+                /*map.setView([lat, lng], 16);
                 map.flyTo([lat, lng], 16, {
                     duration: 1.5
+                });*/
+                
+                map.panTo([lat, lng], {
+                    animate: true,
+                    duration: 1
                 });
 
                 buses[posicion.bus_id]
