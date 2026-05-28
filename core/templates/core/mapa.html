@@ -117,7 +117,7 @@
 
             width: 100%;
 
-            height: 100vh;
+            height: calc(100vh - 75px);
         }
 
         /* PANEL INFERIOR */
@@ -696,7 +696,13 @@
 
         const ruta = await response.json();
 
-        L.polyline(ruta, {
+        let lineaRuta = null;
+
+        if (lineaRuta) {
+            map.removeLayer(lineaRuta);
+        }
+
+        lineaRuta = L.polyline(ruta, {
             color: 'blue',
             weight: 5,
             opacity: 0.7
@@ -797,14 +803,16 @@
 
             });
 
+            // VALIDAR AQUÍ
+            if (!paraderoCercano) return;
+
             // Detectar dirección
             let acercandose = true;
 
             if (posicionesAnteriores[posicion.bus_id]) {
 
-                const anterior =
-                    posicionesAnteriores[posicion.bus_id];
-
+                const anterior = posicionesAnteriores[posicion.bus_id];
+                
                 const distanciaAnterior = calcularDistancia(
                     anterior.lat,
                     anterior.lng,
@@ -896,11 +904,15 @@
 
                 const posicionActual = marker.getLatLng();
 
-                const nuevaLat = posicionActual.lat +
-                    (lat - posicionActual.lat);
+                const factor = 0.2;
 
-                const nuevaLng = posicionActual.lng +
-                    (lng - posicionActual.lng);
+                const nuevaLat =
+                    posicionActual.lat +
+                    (lat - posicionActual.lat) * factor;
+
+                const nuevaLng =
+                    posicionActual.lng +
+                    (lng - posicionActual.lng) * factor;
 
                 marker.setLatLng([
                     nuevaLat,
@@ -947,8 +959,17 @@
 
     }
 
-    // Actualizar cada 2 segundos
-    setInterval(actualizarBuses, 2000);
+    async function loopActualizacion() {
+
+        await actualizarBuses();
+
+        setTimeout(
+            loopActualizacion,
+            2000
+        );
+    }
+
+    loopActualizacion();
 
     // Ejecutar inmediatamente
     actualizarBuses();
