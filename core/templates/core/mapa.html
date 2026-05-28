@@ -758,7 +758,7 @@
     function calcularETA(distanciaKm, velocidadKmH) {
 
         if (velocidadKmH <= 0) {
-            return 'Sin datos';
+            velocidadKmH = 15;
         }
 
         const tiempoHoras = distanciaKm / velocidadKmH;
@@ -918,6 +918,11 @@
                     nuevaLat,
                     nuevaLng
                 ]);
+
+                map.setView([lat, lng], 16);
+                map.flyTo([lat, lng], 16, {
+                    duration: 1.5
+                });
 
                 buses[posicion.bus_id]
                     .setPopupContent(`
