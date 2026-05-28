@@ -689,6 +689,8 @@
     // Lista de paraderos
     const paraderos = [];
 
+    let lineaRuta = null;
+
     async function cargarRuta(busId) {
 
         const response =
@@ -696,12 +698,12 @@
 
         const ruta = await response.json();
 
-        let lineaRuta = null;
-
+        // Eliminar ruta anterior
         if (lineaRuta) {
             map.removeLayer(lineaRuta);
         }
 
+        // Dibujar nueva ruta
         lineaRuta = L.polyline(ruta, {
             color: 'blue',
             weight: 5,
