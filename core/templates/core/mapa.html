@@ -16,578 +16,577 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
     <link rel="manifest" href="{% static 'core/manifest.json' %}">
 
-
     <style>
 
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
-
-    body {
-
-        font-family: 'Inter', sans-serif;
-
-        background: #F7F7F7;
-
-        color: #596273;
-
-        overflow: hidden;
-    }
-
-    .app-container {
-
-        width: 100vw;
-        height: 100vh;
-
-        display: flex;
-        flex-direction: column;
-
-        position: relative;
-    }
-
-    /* TOPBAR */
-
-    .topbar {
-
-        height: 82px;
-
-        background:
-            rgba(255,255,255,0.82);
-
-        backdrop-filter: blur(18px);
-
-        display: flex;
-
-        align-items: center;
-
-        justify-content: space-between;
-
-        padding: 0 20px;
-
-        position: absolute;
-
-        top: 0;
-
-        left: 0;
-
-        right: 0;
-
-        z-index: 1000;
-
-        box-shadow:
-            0 4px 24px rgba(0,0,0,0.05);
-
-        border-bottom:
-            1px solid rgba(255,255,255,0.4);
-    }
-
-    .logo {
-
-        font-size: 30px;
-
-        font-weight: 700;
-
-        color: #596273;
-    }
-
-    .logo span {
-
-        color: #A8D5C2;
-    }
-
-    .estado {
-
-        background: #A8D5C2;
-
-        color: white;
-
-        padding: 8px 14px;
-
-        border-radius: 20px;
-
-        font-size: 14px;
-
-        font-weight: 600;
-    }
-
-    /* MAPA */
-
-    #map {
-
-        width: 100%;
-
-        height: 100vh;
-    }
-
-    /* PANEL INFERIOR */
-
-    .panel-info {
-
-        position: absolute;
-
-        bottom: 90px;
-
-        left: 20px;
-
-        right: 20px;
-
-        z-index: 1000;
-    }
-
-    .card-eta {
-
-        background:
-            rgba(255,255,255,0.92);
-
-        backdrop-filter: blur(18px);
-
-        border-radius: 34px;
-
-        padding: 28px;
-
-        box-shadow:
-            0 12px 40px rgba(0,0,0,0.08);
-
-        min-width: 300px;
-
-        position: relative;
-
-        overflow: hidden;
-
-        border:
-            1px solid rgba(255,255,255,0.4);
-    }
-
-    @keyframes subir {
-
-        from {
-            transform: translateY(40px);
-            opacity: 0;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        to {
-            transform: translateY(0);
-            opacity: 1;
-        }
-    }
+        body {
 
-    .card-eta h3 {
+            font-family: 'Inter', sans-serif;
 
-        font-size: 16px;
+            background: #F7F7F7;
 
-        color: #596273;
+            color: #596273;
 
-        margin-bottom: 10px;
-    }
-
-    .eta {
-
-        font-size: 82px;
-
-        font-weight: 800;
-
-        color: #A8D5C2;
-
-        line-height: 1;
-
-        letter-spacing: -4px;
-
-        margin-top: 10px;
-    }
-
-    .paradero {
-
-        margin-top: 14px;
-
-        font-size: 20px;
-
-        font-weight: 600;
-
-        color: #596273;
-    }
-
-    /* NAVBAR */
-
-    .bottom-nav {
-
-        position: absolute;
-
-        bottom: 0;
-
-        left: 0;
-
-        right: 0;
-
-        height: 75px;
-
-        background: rgba(255,255,255,0.9);
-
-        backdrop-filter: blur(16px);
-
-        display: flex;
-
-        justify-content: space-around;
-
-        align-items: center;
-
-        z-index: 1000;
-
-        box-shadow: 0 -2px 12px rgba(0,0,0,0.05);
-    }
-
-    .bottom-nav button {
-
-        border: none;
-
-        background: transparent;
-
-        display: flex;
-
-        flex-direction: column;
-
-        align-items: center;
-
-        gap: 5px;
-
-        color: #596273;
-
-        font-size: 13px;
-
-        font-weight: 600;
-
-        cursor: pointer;
-
-        transition: 0.2s;
-    }
-
-    .bottom-nav button:hover {
-
-        transform: translateY(-2px);
-
-        color: #A8D5C2;
-    }
-
-    /* LEAFLET */
-
-    .leaflet-control-zoom {
-
-        border: none !important;
-
-        box-shadow: 0 4px 16px rgba(0,0,0,0.08) !important;
-
-        border-radius: 16px !important;
-
-        overflow: hidden;
-    }
-
-    .leaflet-control-zoom a {
-
-        background: white !important;
-
-        color: #596273 !important;
-
-        border: none !important;
-    }
-
-    .leaflet-popup-content-wrapper {
-
-        border-radius: 20px;
-
-        padding: 10px;
-
-        background: rgba(255,255,255,0.95);
-
-        backdrop-filter: blur(10px);
-
-        box-shadow: 0 8px 24px rgba(0,0,0,0.08);
-    }
-
-    .leaflet-popup-tip {
-
-        background: white;
-    }
-
-    .bus-marker {
-
-        width: 42px;
-
-        height: 42px;
-
-        background: #A8D5C2;
-
-        border-radius: 50%;
-
-        display: flex;
-
-        align-items: center;
-
-        justify-content: center;
-
-        font-size: 22px;
-
-        box-shadow:
-            0 8px 20px rgba(0,0,0,0.15);
-
-        border: 3px solid white;
-
-        animation: flotar 2s ease-in-out infinite;
-    }
-
-    @keyframes flotar {
-
-        0% {
-            transform: translateY(0px);
+            overflow: hidden;
         }
 
-        50% {
-            transform: translateY(-4px);
+        .app-container {
+
+            width: 100vw;
+            height: 100vh;
+
+            display: flex;
+            flex-direction: column;
+
+            position: relative;
         }
 
-        100% {
-            transform: translateY(0px);
-        }
-    }
+        /* TOPBAR */
 
-    .bus-icon {
+        .topbar {
 
-        transition:
-            transform 1.5s linear;
+            height: 82px;
 
-        will-change: transform;
-    }
+            background:
+                rgba(255,255,255,0.82);
 
-    .linea-bus {
+            backdrop-filter: blur(18px);
 
-        font-size: 18px;
+            display: flex;
 
-        font-weight: 700;
+            align-items: center;
 
-        color: #596273;
+            justify-content: space-between;
 
-        margin-bottom: 10px;
-    }
+            padding: 0 20px;
 
-    .info-extra {
+            position: absolute;
 
-        margin-top: 18px;
+            top: 0;
 
-        display: flex;
+            left: 0;
 
-        justify-content: space-between;
+            right: 0;
 
-        gap: 10px;
-    }
+            z-index: 1000;
 
-    .info-extra div {
+            box-shadow:
+                0 4px 24px rgba(0,0,0,0.05);
 
-        flex: 1;
-
-        background: #F7F7F7;
-
-        padding: 12px;
-
-        border-radius: 16px;
-
-        text-align: center;
-
-        font-size: 14px;
-
-        font-weight: 600;
-
-        color: #596273;
-    }
-
-    #contenedor-tarjetas {
-
-        display: flex;
-
-        gap: 16px;
-
-        overflow-x: auto;
-
-        padding-bottom: 10px;
-
-        scrollbar-width: none;
-    }
-
-    #contenedor-tarjetas::-webkit-scrollbar {
-
-        display: none;
-    }
-
-    .card-eta {
-
-        min-width: 260px;
-
-        flex-shrink: 0;
-    }
-
-    .paradero-marker {
-
-        width: 36px;
-
-        height: 36px;
-
-        background: #C7B6E6;
-
-        border-radius: 50%;
-
-        display: flex;
-
-        align-items: center;
-
-        justify-content: center;
-
-        font-size: 18px;
-
-        border: 3px solid white;
-
-        box-shadow:
-            0 6px 18px rgba(0,0,0,0.12);
-
-        animation:
-            respirar 3s ease-in-out infinite;
-    }
-
-    @keyframes respirar {
-
-        0% {
-            transform: scale(1);
+            border-bottom:
+                1px solid rgba(255,255,255,0.4);
         }
 
-        50% {
-            transform: scale(1.08);
+        .logo {
+
+            font-size: 30px;
+
+            font-weight: 700;
+
+            color: #596273;
         }
 
-        100% {
-            transform: scale(1);
-        }
-    }
+        .logo span {
 
-    #map {
-
-        filter:
-            saturate(0.9)
-            brightness(0.96);
-    }
-
-    .leaflet-control-zoom {
-
-        display: none;
-    }
-
-    .topbar-left {
-
-        display: flex;
-
-        align-items: center;
-
-        gap: 14px;
-    }
-
-    .logo-icon {
-
-        width: 52px;
-
-        height: 52px;
-
-        border-radius: 18px;
-
-        background: #A8D5C2;
-
-        display: flex;
-
-        align-items: center;
-
-        justify-content: center;
-
-        font-size: 28px;
-
-        box-shadow:
-            0 8px 20px rgba(168,213,194,0.35);
-    }
-
-    .logo-title {
-
-        font-size: 28px;
-
-        font-weight: 800;
-
-        letter-spacing: -1px;
-
-        color: #596273;
-    }
-
-    .logo-title span {
-
-        color: #A8D5C2;
-    }
-
-    .logo-subtitle {
-
-        font-size: 13px;
-
-        color: #8A94A6;
-
-        margin-top: -2px;
-    }
-
-    .estado-online {
-
-        background: rgba(168,213,194,0.18);
-
-        color: #4D8B74;
-
-        padding: 10px 16px;
-
-        border-radius: 22px;
-
-        display: flex;
-
-        align-items: center;
-
-        gap: 8px;
-
-        font-size: 14px;
-
-        font-weight: 700;
-    }
-
-    .estado-dot {
-
-        width: 10px;
-
-        height: 10px;
-
-        border-radius: 50%;
-
-        background: #5BC58A;
-
-        animation:
-            pulse 1.8s infinite;
-    }
-
-    @keyframes pulse {
-
-        0% {
-            transform: scale(1);
-            opacity: 1;
+            color: #A8D5C2;
         }
 
-        50% {
-            transform: scale(1.4);
-            opacity: 0.6;
+        .estado {
+
+            background: #A8D5C2;
+
+            color: white;
+
+            padding: 8px 14px;
+
+            border-radius: 20px;
+
+            font-size: 14px;
+
+            font-weight: 600;
         }
 
-        100% {
-            transform: scale(1);
-            opacity: 1;
-        }
-    }
+        /* MAPA */
 
-</style>
+        #map {
+
+            width: 100%;
+
+            height: 100vh;
+        }
+
+        /* PANEL INFERIOR */
+
+        .panel-info {
+
+            position: absolute;
+
+            bottom: 90px;
+
+            left: 20px;
+
+            right: 20px;
+
+            z-index: 1000;
+        }
+
+        .card-eta {
+
+            background:
+                rgba(255,255,255,0.92);
+
+            backdrop-filter: blur(18px);
+
+            border-radius: 34px;
+
+            padding: 28px;
+
+            box-shadow:
+                0 12px 40px rgba(0,0,0,0.08);
+
+            min-width: 300px;
+
+            position: relative;
+
+            overflow: hidden;
+
+            border:
+                1px solid rgba(255,255,255,0.4);
+        }
+
+        @keyframes subir {
+
+            from {
+                transform: translateY(40px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .card-eta h3 {
+
+            font-size: 16px;
+
+            color: #596273;
+
+            margin-bottom: 10px;
+        }
+
+        .eta {
+
+            font-size: 82px;
+
+            font-weight: 800;
+
+            color: #A8D5C2;
+
+            line-height: 1;
+
+            letter-spacing: -4px;
+
+            margin-top: 10px;
+        }
+
+        .paradero {
+
+            margin-top: 14px;
+
+            font-size: 20px;
+
+            font-weight: 600;
+
+            color: #596273;
+        }
+
+        /* NAVBAR */
+
+        .bottom-nav {
+
+            position: absolute;
+
+            bottom: 0;
+
+            left: 0;
+
+            right: 0;
+
+            height: 75px;
+
+            background: rgba(255,255,255,0.9);
+
+            backdrop-filter: blur(16px);
+
+            display: flex;
+
+            justify-content: space-around;
+
+            align-items: center;
+
+            z-index: 1000;
+
+            box-shadow: 0 -2px 12px rgba(0,0,0,0.05);
+        }
+
+        .bottom-nav button {
+
+            border: none;
+
+            background: transparent;
+
+            display: flex;
+
+            flex-direction: column;
+
+            align-items: center;
+
+            gap: 5px;
+
+            color: #596273;
+
+            font-size: 13px;
+
+            font-weight: 600;
+
+            cursor: pointer;
+
+            transition: 0.2s;
+        }
+
+        .bottom-nav button:hover {
+
+            transform: translateY(-2px);
+
+            color: #A8D5C2;
+        }
+
+        /* LEAFLET */
+
+        .leaflet-control-zoom {
+
+            border: none !important;
+
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08) !important;
+
+            border-radius: 16px !important;
+
+            overflow: hidden;
+        }
+
+        .leaflet-control-zoom a {
+
+            background: white !important;
+
+            color: #596273 !important;
+
+            border: none !important;
+        }
+
+        .leaflet-popup-content-wrapper {
+
+            border-radius: 20px;
+
+            padding: 10px;
+
+            background: rgba(255,255,255,0.95);
+
+            backdrop-filter: blur(10px);
+
+            box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+        }
+
+        .leaflet-popup-tip {
+
+            background: white;
+        }
+
+        .bus-marker {
+
+            width: 42px;
+
+            height: 42px;
+
+            background: #A8D5C2;
+
+            border-radius: 50%;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            font-size: 22px;
+
+            box-shadow:
+                0 8px 20px rgba(0,0,0,0.15);
+
+            border: 3px solid white;
+
+            animation: flotar 2s ease-in-out infinite;
+        }
+
+        @keyframes flotar {
+
+            0% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-4px);
+            }
+
+            100% {
+                transform: translateY(0px);
+            }
+        }
+
+        .bus-icon {
+
+            transition:
+                transform 1.5s linear;
+
+            will-change: transform;
+        }
+
+        .linea-bus {
+
+            font-size: 18px;
+
+            font-weight: 700;
+
+            color: #596273;
+
+            margin-bottom: 10px;
+        }
+
+        .info-extra {
+
+            margin-top: 18px;
+
+            display: flex;
+
+            justify-content: space-between;
+
+            gap: 10px;
+        }
+
+        .info-extra div {
+
+            flex: 1;
+
+            background: #F7F7F7;
+
+            padding: 12px;
+
+            border-radius: 16px;
+
+            text-align: center;
+
+            font-size: 14px;
+
+            font-weight: 600;
+
+            color: #596273;
+        }
+
+        #contenedor-tarjetas {
+
+            display: flex;
+
+            gap: 16px;
+
+            overflow-x: auto;
+
+            padding-bottom: 10px;
+
+            scrollbar-width: none;
+        }
+
+        #contenedor-tarjetas::-webkit-scrollbar {
+
+            display: none;
+        }
+
+        .card-eta {
+
+            min-width: 260px;
+
+            flex-shrink: 0;
+        }
+
+        .paradero-marker {
+
+            width: 36px;
+
+            height: 36px;
+
+            background: #C7B6E6;
+
+            border-radius: 50%;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            font-size: 18px;
+
+            border: 3px solid white;
+
+            box-shadow:
+                0 6px 18px rgba(0,0,0,0.12);
+
+            animation:
+                respirar 3s ease-in-out infinite;
+        }
+
+        @keyframes respirar {
+
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.08);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        #map {
+
+            filter:
+                saturate(0.9)
+                brightness(0.96);
+        }
+
+        .leaflet-control-zoom {
+
+            display: none;
+        }
+
+        .topbar-left {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 14px;
+        }
+
+        .logo-icon {
+
+            width: 52px;
+
+            height: 52px;
+
+            border-radius: 18px;
+
+            background: #A8D5C2;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            font-size: 28px;
+
+            box-shadow:
+                0 8px 20px rgba(168,213,194,0.35);
+        }
+
+        .logo-title {
+
+            font-size: 28px;
+
+            font-weight: 800;
+
+            letter-spacing: -1px;
+
+            color: #596273;
+        }
+
+        .logo-title span {
+
+            color: #A8D5C2;
+        }
+
+        .logo-subtitle {
+
+            font-size: 13px;
+
+            color: #8A94A6;
+
+            margin-top: -2px;
+        }
+
+        .estado-online {
+
+            background: rgba(168,213,194,0.18);
+
+            color: #4D8B74;
+
+            padding: 10px 16px;
+
+            border-radius: 22px;
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 8px;
+
+            font-size: 14px;
+
+            font-weight: 700;
+        }
+
+        .estado-dot {
+
+            width: 10px;
+
+            height: 10px;
+
+            border-radius: 50%;
+
+            background: #5BC58A;
+
+            animation:
+                pulse 1.8s infinite;
+        }
+
+        @keyframes pulse {
+
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.4);
+                opacity: 0.6;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+    </style>
 </head>
 <body>
 <div class="app-container">

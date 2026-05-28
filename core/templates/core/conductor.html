@@ -2,8 +2,9 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="theme-color" content="#1976d2">
     <title>Modo Conductor</title>
-
+    <link rel="manifest" href="{% static 'core/manifest.json' %}">
     <style>
 
         * {
@@ -677,6 +678,37 @@
             'estado'
         ).innerHTML =
             'GPS detenido';
+
+        if (wakeLock !== null) {
+
+            wakeLock.release();
+
+            wakeLock = null;
+        }
+    }
+
+    let wakeLock = null;
+
+    async function mantenerPantallaActiva() {
+
+        try {
+
+            wakeLock =
+                await navigator.wakeLock.request(
+                    'screen'
+                );
+
+            console.log(
+                '🔆 Pantalla bloqueada activa'
+            );
+
+        } catch(err) {
+
+            console.log(
+                'Wake Lock error:',
+                err
+            );
+        }
     }
 
     let recorridoActivo = false;
@@ -709,6 +741,7 @@
             );
 
             iniciarGPS();
+            mantenerPantallaActiva();
 
             recorridoActivo = true;
 
