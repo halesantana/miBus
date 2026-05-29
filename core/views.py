@@ -12,7 +12,6 @@ from django.contrib.auth import logout
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import (
     api_view,
-    authentication_classes,
     permission_classes
 )
 from rest_framework.authentication import (
@@ -31,7 +30,6 @@ def mapa(request):
     })
 
 @api_view(['POST'])
-@authentication_classes([])
 @permission_classes([IsAuthenticated])
 def recibir_gps(request):
 
@@ -107,7 +105,6 @@ def recibir_gps(request):
     return Response(serializer.errors, status=400)
 
 @api_view(['GET'])
-@authentication_classes([])
 @permission_classes([IsAuthenticated])
 def obtener_posiciones(request):
 
@@ -205,7 +202,6 @@ def logout_conductor(request):
     return redirect('login')
 
 @api_view(['POST'])
-@authentication_classes([])
 @permission_classes([IsAuthenticated])
 def iniciar_servicio(request):
 
@@ -232,7 +228,6 @@ def iniciar_servicio(request):
         }, status=404)
 
 @api_view(['POST'])
-@authentication_classes([])
 @permission_classes([IsAuthenticated])
 def finalizar_servicio(request):
 
