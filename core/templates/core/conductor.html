@@ -613,7 +613,7 @@
         await fetch('/api/gps/', {
 
             method: 'POST',
-
+            credentials: 'include',
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -672,7 +672,7 @@
             '/api/finalizar-servicio/',
             {
                 method: 'POST',
-
+                credentials: 'include',
                 headers: {
                     'Content-Type':
                         'application/json'
@@ -726,7 +726,7 @@
                 '/api/iniciar-servicio/',
                 {
                     method: 'POST',
-
+                    credentials: 'include',
                     headers: {
                         'Content-Type':
                             'application/json'

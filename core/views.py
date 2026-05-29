@@ -15,13 +15,11 @@ from rest_framework.decorators import (
     authentication_classes,
     permission_classes
 )
-
 from rest_framework.authentication import (
     BasicAuthentication
 )
-
 from rest_framework.permissions import (
-    AllowAny
+    IsAuthenticated
 )
 
 def mapa(request):
@@ -34,7 +32,7 @@ def mapa(request):
 
 @api_view(['POST'])
 @authentication_classes([])
-@permission_classes([AllowAny])
+@permission_classes([IsAuthenticated])
 def recibir_gps(request):
 
     bus_id = request.data.get('bus_id')
@@ -110,7 +108,7 @@ def recibir_gps(request):
 
 @api_view(['GET'])
 @authentication_classes([])
-@permission_classes([AllowAny])
+@permission_classes([IsAuthenticated])
 def obtener_posiciones(request):
 
     buses = Bus.objects.all()
@@ -208,7 +206,7 @@ def logout_conductor(request):
 
 @api_view(['POST'])
 @authentication_classes([])
-@permission_classes([AllowAny])
+@permission_classes([IsAuthenticated])
 def iniciar_servicio(request):
 
     bus_id = request.data.get('bus_id')
@@ -235,7 +233,7 @@ def iniciar_servicio(request):
 
 @api_view(['POST'])
 @authentication_classes([])
-@permission_classes([AllowAny])
+@permission_classes([IsAuthenticated])
 def finalizar_servicio(request):
 
     bus_id = request.data.get('bus_id')
