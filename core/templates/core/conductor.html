@@ -526,7 +526,7 @@
 </div>
 
 <script>
-
+    
     let watchId = null;
 
     let wakeLock = null;
@@ -615,7 +615,8 @@
             method: 'POST',
             credentials: 'include',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type':'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
             },
 
             body: JSON.stringify({
@@ -674,8 +675,8 @@
                 method: 'POST',
                 credentials: 'include',
                 headers: {
-                    'Content-Type':
-                        'application/json'
+                    'Content-Type':'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
                 },
 
                 body: JSON.stringify({
@@ -685,6 +686,7 @@
         );
 
         recorridoActivo = false;
+        document.getElementById('bus-select').disabled = false;
 
         document.getElementById(
             'estado-conexion'
@@ -697,7 +699,7 @@
             'INICIAR RECORRIDO';
 
         document.getElementById(
-            'estado'
+            'estado-conexion'
         ).innerHTML =
             'GPS detenido';
 
@@ -728,8 +730,8 @@
                     method: 'POST',
                     credentials: 'include',
                     headers: {
-                        'Content-Type':
-                            'application/json'
+                        'Content-Type':'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'
                     },
 
                     body: JSON.stringify({
@@ -742,6 +744,7 @@
             mantenerPantallaActiva();
 
             recorridoActivo = true;
+            document.getElementById('bus-select').disabled = true;
 
             document.getElementById(
                 'estado-conexion'
