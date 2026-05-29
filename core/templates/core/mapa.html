@@ -840,7 +840,7 @@
             // Texto dirección
             const estadoDireccion = acercandose
                 ? '🟢 En camino'
-                : '⚪ Recorriendo ruta';
+                : '⚪ Detenido';
 
             // Velocidad promedio temporal
             //const velocidad = 30;
@@ -973,12 +973,13 @@
 
     async function loopActualizacion() {
 
-        await actualizarBuses();
-
-        setTimeout(
-            loopActualizacion,
-            2000
-        );
+        try {
+            await actualizarBuses();
+        } catch (e) {
+            console.error("Error al actualizar buses:", e);
+        }
+        // Espera 2 segundos DESPUÉS de que la anterior terminó
+        setTimeout(loopActualizacion, 2000);
     }
 
     loopActualizacion();
