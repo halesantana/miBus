@@ -133,7 +133,7 @@ def obtener_posiciones(request):
 
     return Response(resultado)
 
-@login_required
+@login_required(login_url='login')
 def conductor(request):
         
     buses = Bus.objects.all()
