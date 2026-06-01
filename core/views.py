@@ -105,7 +105,6 @@ def recibir_gps(request):
     return Response(serializer.errors, status=400)
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
 def obtener_posiciones(request):
 
     buses = Bus.objects.all()
