@@ -633,7 +633,9 @@
     </div>
     <nav class="bottom-nav">
 
-        <button>📍 Mi ubicación</button>
+        <button onclick="miUbicacion()">
+            📍 Mi ubicación
+        </button>
         <button>🚌 Buses</button>
         <button onclick="toggleParaderos()">
             🛑 Paraderos
@@ -654,6 +656,8 @@
 
     // Guardar marcadores de buses
     const buses = {};
+
+    let marcadorUsuario = null;
 
     const busIcon = L.divIcon({
 
@@ -1001,6 +1005,84 @@
         // Espera 2 segundos DESPUÉS de que la anterior terminó
         setTimeout(loopActualizacion, 2000);
     }
+
+    function miUbicacion() {
+
+        if (!navigator.geolocation) {
+
+            alert("Tu navegador no soporta geolocalización");
+
+            return;
+        }
+
+        navigator.geolocation.getCurrentPosition(
+
+            function(posicion) {
+
+                const lat = posicion.coords.latitude;
+                const lng = posicion.coords.longitude;
+
+                if (marcadorUsuario) {
+
+                    marcadorUsuario.setLatLng([lat, lng]);
+
+                } else {
+
+                    marcadorUsuario = L.marker(
+                        [lat, lng]
+                    )
+                    .addTo(map)
+                    .bindPopup("📍 Estás aquí");
+
+                }
+
+                map.flyTo(
+                    [lat, lng],
+                    16,
+                    {
+                        duration: 1.5
+                    }
+                );
+
+            },
+
+            function(error) {
+
+                console.error(error);
+
+                alert("No fue posible obtener tu ubicación");
+
+            }
+
+        );
+    }
+    
+    const usuarioIcon = L.divIcon({
+
+        className: '',
+
+        html: `
+            <div style="
+                width:18px;
+                height:18px;
+                background:#4285F4;
+                border:3px solid white;
+                border-radius:50%;
+                box-shadow:0 0 10px rgba(0,0,0,.3);
+            ">
+            </div>
+        `,
+
+        iconSize: [18,18],
+        iconAnchor: [9,9]
+
+    });
+
+    marcadorUsuario = L.marker(
+        [lat, lng],
+        { icon: usuarioIcon }
+    )
+    .addTo(map);
 
     loopActualizacion();
 
