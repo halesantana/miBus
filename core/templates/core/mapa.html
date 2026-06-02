@@ -733,11 +733,11 @@
 
         marcadoresParaderos.push(marker);
 
-        /*paraderos.push({
+        paraderos.push({
             nombre: "{{ paradero.nombre }}",
             latitud: {{ paradero.latitud }},
             longitud: {{ paradero.longitud }}
-        });*/
+        });
 
     {% endfor %}
 
@@ -1001,9 +1001,6 @@
     }
 
     loopActualizacion();
-
-    // Ejecutar inmediatamente
-    actualizarBuses();
 
     cargarRuta(1);
 
