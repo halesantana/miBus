@@ -147,7 +147,7 @@ def obtener_ruta(request, bus_id):
 
     posiciones = PosicionGPS.objects.filter(
         bus_id=bus_id
-    ).order_by('-timestamp')[:20]
+    ).order_by('-timestamp')[:1000]
 
     # Invertir para dejar orden correcto
     posiciones = reversed(posiciones)
