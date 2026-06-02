@@ -635,7 +635,9 @@
 
         <button>📍 Mi ubicación</button>
         <button>🚌 Buses</button>
-        <button>🛑 Paraderos</button>
+        <button onclick="toggleParaderos()">
+            🛑 Paraderos
+        </button>
         <button>🎯 Seguir bus</button>
 
     </nav>
@@ -717,7 +719,7 @@
     // Cargar paraderos desde Django
     {% for paradero in paraderos %}
 
-        const marker = L.marker(
+        let marker = L.marker(
             [
                 {{ paradero.latitud }},
                 {{ paradero.longitud }}
@@ -1002,7 +1004,9 @@
 
     loopActualizacion();
 
-    cargarRuta(1);
+    setInterval(() => {
+        cargarRuta(1);
+    }, 10000);
 
 </script>
 </body>
