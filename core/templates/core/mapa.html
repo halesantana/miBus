@@ -1006,6 +1006,27 @@
         setTimeout(loopActualizacion, 2000);
     }
 
+    const usuarioIcon = L.divIcon({
+
+        className: '',
+
+        html: `
+            <div style="
+                width:18px;
+                height:18px;
+                background:#4285F4;
+                border:3px solid white;
+                border-radius:50%;
+                box-shadow:0 0 10px rgba(0,0,0,.3);
+            ">
+            </div>
+        `,
+
+        iconSize: [18,18],
+        iconAnchor: [9,9]
+
+    });
+
     function miUbicacion() {
 
         if (!navigator.geolocation) {
@@ -1029,7 +1050,10 @@
                 } else {
 
                     marcadorUsuario = L.marker(
-                        [lat, lng]
+                        [lat, lng],
+                        {
+                            icon: usuarioIcon
+                        }
                     )
                     .addTo(map)
                     .bindPopup("📍 Estás aquí");
@@ -1057,33 +1081,6 @@
         );
     }
     
-    const usuarioIcon = L.divIcon({
-
-        className: '',
-
-        html: `
-            <div style="
-                width:18px;
-                height:18px;
-                background:#4285F4;
-                border:3px solid white;
-                border-radius:50%;
-                box-shadow:0 0 10px rgba(0,0,0,.3);
-            ">
-            </div>
-        `,
-
-        iconSize: [18,18],
-        iconAnchor: [9,9]
-
-    });
-
-    marcadorUsuario = L.marker(
-        [lat, lng],
-        { icon: usuarioIcon }
-    )
-    .addTo(map);
-
     loopActualizacion();
 
     setInterval(() => {
