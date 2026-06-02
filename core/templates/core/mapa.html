@@ -705,19 +705,9 @@
             map.removeLayer(lineaRuta);
         }
 
-        let colorRuta = 'blue';
-
-        if (velocidad > 10) {
-            colorRuta = 'green';
-        } else if (velocidad > 2) {
-            colorRuta = 'orange';
-        } else {
-            colorRuta = 'red';
-        }
-
         // Dibujar nueva ruta
         lineaRuta = L.polyline(ruta, {
-            color: colorRuta,
+            color: 'blue',
             weight: 5,
             opacity: 0.7
         }).addTo(map);
