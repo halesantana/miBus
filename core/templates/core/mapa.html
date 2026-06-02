@@ -719,7 +719,7 @@
     // Cargar paraderos desde Django
     {% for paradero in paraderos %}
 
-        let marker = L.marker(
+        const marcadorParadero  = L.marker(
             [
                 {{ paradero.latitud }},
                 {{ paradero.longitud }}
@@ -733,7 +733,7 @@
             🛑 {{ paradero.nombre }}
         `);
 
-        marcadoresParaderos.push(marker);
+        marcadoresParaderos.push(marcadorParadero);
 
         paraderos.push({
             nombre: "{{ paradero.nombre }}",
