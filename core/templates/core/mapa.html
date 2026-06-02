@@ -633,10 +633,10 @@
     </div>
     <nav class="bottom-nav">
 
-        <button>🗺️ Mapa</button>
+        <button>📍 Mi ubicación</button>
         <button>🚌 Buses</button>
         <button>🛑 Paraderos</button>
-        <button>⚙️ Ajustes</button>
+        <button>🎯 Seguir bus</button>
 
     </nav>
 </div>
@@ -712,10 +712,12 @@
 
     }
 
+    const marcadoresParaderos = [];
+
     // Cargar paraderos desde Django
     {% for paradero in paraderos %}
 
-        L.marker(
+        const marker = L.marker(
             [
                 {{ paradero.latitud }},
                 {{ paradero.longitud }}
@@ -729,13 +731,29 @@
             🛑 {{ paradero.nombre }}
         `);
 
-        paraderos.push({
+        marcadoresParaderos.push(marker);
+
+        /*paraderos.push({
             nombre: "{{ paradero.nombre }}",
             latitud: {{ paradero.latitud }},
             longitud: {{ paradero.longitud }}
-        });
+        });*/
 
     {% endfor %}
+
+    let paraderosVisibles = true;
+
+    function toggleParaderos() {
+        paraderosVisibles = !paraderosVisibles;
+
+        marcadoresParaderos.forEach(marker => {
+            if (paraderosVisibles) {
+                marker.addTo(map);
+            } else {
+                map.removeLayer(marker);
+            }
+        });
+    }
 
     // Calcular distancia entre coordenadas (Haversine)
     function calcularDistancia(lat1, lon1, lat2, lon2) {
