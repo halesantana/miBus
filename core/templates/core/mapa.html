@@ -690,8 +690,6 @@
 
     });
 
-    // Guardar posiciones anteriores
-    const posicionesAnteriores = {};
     // Lista de paraderos
     const paraderos = [];
 
@@ -832,47 +830,26 @@
             // VALIDAR AQUÍ
             if (!paraderoCercano) return;
 
-            // Detectar dirección
-            let acercandose = true;
-
-            if (posicionesAnteriores[posicion.bus_id]) {
-
-                const anterior = posicionesAnteriores[posicion.bus_id];
-                
-                const distanciaAnterior = calcularDistancia(
-                    anterior.lat,
-                    anterior.lng,
-                    paraderoCercano.latitud,
-                    paraderoCercano.longitud
-                );
-
-                // Si ahora está más lejos → alejándose
-                if (menorDistancia > distanciaAnterior) {
-
-                    acercandose = false;
-
-                }
-
-            }
-
-            // Guardar posición actual
-            posicionesAnteriores[posicion.bus_id] = {
-                lat: lat,
-                lng: lng
-            };
-
-            // Texto dirección
-            const estadoDireccion = acercandose
-                ? '🟢 En camino'
-                : '⚪ Detenido';
-
             // Velocidad promedio temporal
             //const velocidad = 30;
-            const velocidad = parseFloat(posicion.velocidad);
+            const velocidad =
+                parseFloat(posicion.velocidad) || 0;
+
+            // Texto dirección
+            const estadoDireccion =
+                velocidad > 10
+                    ? '🟢 En camino'
+                    : '⚪ Detenido';
+
+            const velocidadSegura =
+                Math.min(
+                    Math.max(velocidad, 5),
+                    100
+                );
             // ETA
             const eta = calcularETA(
                 menorDistancia,
-                velocidad
+                velocidadSegura
             );
 
             const contenedor =
@@ -930,7 +907,7 @@
 
                 const posicionActual = marker.getLatLng();
 
-                const factor = 0.2;
+                const factor = 0.8;
 
                 const nuevaLat =
                     posicionActual.lat +
@@ -1083,9 +1060,7 @@
     
     loopActualizacion();
 
-    setInterval(() => {
-        cargarRuta(1);
-    }, 10000);
+    cargarRuta(1);
 
 </script>
 </body>

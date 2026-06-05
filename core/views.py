@@ -34,6 +34,7 @@ def mapa(request):
 def recibir_gps(request):
 
     bus_id = request.data.get('bus_id')
+    velocidad_gps = request.data.get('velocidad')
 
     try:
         bus = Bus.objects.get(id=bus_id)
@@ -46,7 +47,14 @@ def recibir_gps(request):
     ultima_posicion = PosicionGPS.objects.filter(
         bus=bus
     ).order_by('-timestamp').first()
+    
     velocidad = 0
+
+    if velocidad_gps is not None:
+        velocidad = round(
+            float(velocidad_gps),
+            2
+        )
 
     if ultima_posicion:
 
@@ -79,12 +87,14 @@ def recibir_gps(request):
 
         if tiempo_segundos > 0:
 
-            velocidad = (
-                distancia_km /
-                (tiempo_segundos / 3600)
-            )
+            if tiempo_segundos < 3:
+                velocidad = ultima_posicion.velocidad or 0
 
-            velocidad = round(velocidad, 2)
+            elif distancia_km < 0.01:
+                velocidad = 0
+
+            elif velocidad > 120:
+                velocidad = ultima_posicion.velocidad or 0
 
     datos = {
         'bus': bus.id,
